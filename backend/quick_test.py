@@ -63,44 +63,22 @@ if response.status_code == 200:
 
     # Patterns
     if 'key_patterns' in summary:
-        print(f"🔍 PATTERNS FOUND: {len(summary['patterns'])}")
-        for i, pattern in enumerate(summary['patterns'][:3], 1):
-            print(f"\n  {i}. {pattern.get('title', 'N/A')}")
-            print(f"     Type: {pattern.get('type', 'N/A')}")
-            print(f"     Severity: {pattern.get('severity', 'N/A')}")
-            print(f"     Description: {pattern.get('description', 'N/A')[:150]}...")
+        print(f"\n    Key Patterns ({len(summary['key_patterns'])}):")
+        for i, pattern in enumerate(summary['key_patterns'], 1):
+            severity = pattern.get('severity', 'N/A').upper()
+            print(f"\n      {i}. {pattern.get('pattern', 'N/A')} [{severity}]")
+            desc = pattern.get('description', 'N/A')[:120]
+            print(f"         {desc}...")
 
-    # Mood trends
-    if 'mood_trends' in summary:
-        mood = summary['mood_trends']
-        print(f"\n💭 MOOD TRENDS:")
-        print(f"  Overall: {mood.get('overall_sentiment', 'N/A')}")
-        print(f"  Score: {mood.get('sentiment_score', 'N/A')}")
-        print(f"  Shift: {mood.get('mood_shift', 'N/A')}")
+    # Topics
+    if 'main_topics' in summary:
+        topics = ', '.join(summary['main_topics'])
+        print(f"\n    Main Topics: {topics}")
 
-    # Key topics
-    if 'key_topics' in summary:
-        print(f"\n📌 KEY TOPICS:")
-        for topic in summary['key_topics'][:5]:
-            print(f"  • {topic.get('topic', 'N/A')} ({topic.get('count', 0)}x)")
-
-    # Clinical prompts
-    if 'clinical_prompts' in summary:
-        print(f"\n💡 CLINICAL PROMPTS:")
-        for prompt in summary['clinical_prompts']:
-            print(f"  • {prompt}")
-
-    # Strengths
-    if 'strengths_observed' in summary:
-        print(f"\n✨ STRENGTHS OBSERVED:")
-        for strength in summary['strengths_observed']:
-            print(f"  • {strength}")
-
-    # Concerns
-    if 'concerns' in summary:
-        print(f"\n⚠️  CONCERNS:")
-        for concern in summary['concerns']:
-            print(f"  • {concern}")
+    # Section 3: Suggestions
+    print(f"\n3️⃣  SUGGESTIONS ({len(result.get('suggestions', []))}):")
+    for i, suggestion in enumerate(result.get('suggestions', []), 1):
+        print(f"    {i}. {suggestion}")
 
     print("\n" + "="*60)
     print("\nFull response saved to: analysis_result.json")
