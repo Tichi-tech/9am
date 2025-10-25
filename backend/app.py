@@ -17,7 +17,13 @@ CORS(app)
 
 # Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+BASE_DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+
+def get_patient_data_dir(patient_id):
+    """Get or create data directory for a specific patient"""
+    patient_dir = os.path.join(BASE_DATA_DIR, patient_id)
+    os.makedirs(patient_dir, exist_ok=True)
+    return patient_dir
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -34,24 +40,29 @@ def convert_google_doc():
 
     Expected payload:
     {
+        "patient_id": "patient_123",  # Required for multi-user
         "doc_url": "https://docs.google.com/document/d/...",
         "date": "2025-01-12"  # Optional, will extract from content if not provided
     }
     """
     try:
         data = request.json
+        patient_id = data.get('patient_id', 'default')
         doc_url = data.get('doc_url')
         entry_date = data.get('date')
 
         if not doc_url:
             return jsonify({"error": "doc_url is required"}), 400
 
+        # Get patient-specific directory
+        patient_dir = get_patient_data_dir(patient_id)
+
         # Convert Google Doc to JSON entry
         entry = convert_google_doc_to_json(doc_url, entry_date)
 
         # Save as daily JSON file
         filename = f"{entry['date']}.json"
-        filepath = os.path.join(DATA_DIR, filename)
+        filepath = os.path.join(patient_dir, filename)
 
         with open(filepath, 'w') as f:
             json.dump(entry, f, indent=2)
@@ -73,17 +84,22 @@ def aggregate_week():
 
     Expected payload:
     {
+        "patient_id": "patient_123",  # Required for multi-user
         "week_start": "2025-01-12",
         "week_end": "2025-01-18"
     }
     """
     try:
         data = request.json
+        patient_id = data.get('patient_id', 'default')
         week_start = data.get('week_start')
         week_end = data.get('week_end')
 
         if not week_start or not week_end:
             return jsonify({"error": "week_start and week_end are required"}), 400
+
+        # Get patient-specific directory
+        patient_dir = get_patient_data_dir(patient_id)
 
         # Find all daily JSON files in the date range
         from datetime import datetime, timedelta
@@ -95,7 +111,7 @@ def aggregate_week():
 
         while current_date <= end_date:
             date_str = current_date.strftime('%Y-%m-%d')
-            filepath = os.path.join(DATA_DIR, f"{date_str}.json")
+            filepath = os.path.join(patient_dir, f"{date_str}.json")
 
             if os.path.exists(filepath):
                 with open(filepath, 'r') as f:
@@ -106,14 +122,14 @@ def aggregate_week():
 
         # Create weekly aggregated file
         weekly_data = {
-            "patient_id": "anonymous_001",
+            "patient_id": patient_id,
             "week_start": week_start,
             "week_end": week_end,
             "entries": entries
         }
 
         weekly_filename = f"week_{week_start}_to_{week_end}.json"
-        weekly_filepath = os.path.join(DATA_DIR, weekly_filename)
+        weekly_filepath = os.path.join(patient_dir, weekly_filename)
 
         with open(weekly_filepath, 'w') as f:
             json.dump(weekly_data, f, indent=2)
@@ -136,28 +152,26 @@ def analyze_week():
 
     Expected payload:
     {
-        "week_file": "week_2025-01-12_to_2025-01-18.json"
-    }
-    OR
-    {
+        "patient_id": "patient_123",  # Required for multi-user
         "week_start": "2025-01-12",
         "week_end": "2025-01-18"
     }
     """
     try:
         data = request.json
-        week_file = data.get('week_file')
+        patient_id = data.get('patient_id', 'default')
+        week_start = data.get('week_start')
+        week_end = data.get('week_end')
 
-        # If week_file not provided, construct from dates
-        if not week_file:
-            week_start = data.get('week_start')
-            week_end = data.get('week_end')
-            if not week_start or not week_end:
-                return jsonify({"error": "Either week_file or (week_start and week_end) required"}), 400
-            week_file = f"week_{week_start}_to_{week_end}.json"
+        if not week_start or not week_end:
+            return jsonify({"error": "week_start and week_end are required"}), 400
+
+        # Get patient-specific directory
+        patient_dir = get_patient_data_dir(patient_id)
+        week_file = f"week_{week_start}_to_{week_end}.json"
 
         # Load weekly data
-        weekly_filepath = os.path.join(DATA_DIR, week_file)
+        weekly_filepath = os.path.join(patient_dir, week_file)
 
         if not os.path.exists(weekly_filepath):
             return jsonify({"error": f"Weekly file not found: {week_file}"}), 404
@@ -170,7 +184,7 @@ def analyze_week():
 
         # Save analysis summary
         summary_filename = f"summary_{weekly_data['week_start']}_to_{weekly_data['week_end']}.json"
-        summary_filepath = os.path.join(DATA_DIR, summary_filename)
+        summary_filepath = os.path.join(patient_dir, summary_filename)
 
         with open(summary_filepath, 'w') as f:
             json.dump(analysis, f, indent=2)
@@ -206,6 +220,7 @@ def process_full_pipeline():
 
     Expected payload:
     {
+        "patient_id": "patient_123",  # Required for multi-user
         "doc_urls": [
             {"url": "https://docs.google.com/...", "date": "2025-01-12"},
             {"url": "https://docs.google.com/...", "date": "2025-01-13"}
@@ -216,9 +231,13 @@ def process_full_pipeline():
     """
     try:
         data = request.json
+        patient_id = data.get('patient_id', 'default')
         doc_urls = data.get('doc_urls', [])
         week_start = data.get('week_start')
         week_end = data.get('week_end')
+
+        # Get patient-specific directory
+        patient_dir = get_patient_data_dir(patient_id)
 
         results = {
             "converted_entries": [],
@@ -230,7 +249,7 @@ def process_full_pipeline():
         for doc_data in doc_urls:
             entry = convert_google_doc_to_json(doc_data['url'], doc_data.get('date'))
             filename = f"{entry['date']}.json"
-            filepath = os.path.join(DATA_DIR, filename)
+            filepath = os.path.join(patient_dir, filename)
 
             with open(filepath, 'w') as f:
                 json.dump(entry, f, indent=2)
@@ -247,7 +266,7 @@ def process_full_pipeline():
 
         while current_date <= end_date:
             date_str = current_date.strftime('%Y-%m-%d')
-            filepath = os.path.join(DATA_DIR, f"{date_str}.json")
+            filepath = os.path.join(patient_dir, f"{date_str}.json")
 
             if os.path.exists(filepath):
                 with open(filepath, 'r') as f:
@@ -257,14 +276,14 @@ def process_full_pipeline():
             current_date += timedelta(days=1)
 
         weekly_data = {
-            "patient_id": "anonymous_001",
+            "patient_id": patient_id,
             "week_start": week_start,
             "week_end": week_end,
             "entries": entries
         }
 
         weekly_filename = f"week_{week_start}_to_{week_end}.json"
-        weekly_filepath = os.path.join(DATA_DIR, weekly_filename)
+        weekly_filepath = os.path.join(patient_dir, weekly_filename)
 
         with open(weekly_filepath, 'w') as f:
             json.dump(weekly_data, f, indent=2)
@@ -278,7 +297,7 @@ def process_full_pipeline():
         analysis = analyze_weekly_entries(weekly_data)
 
         summary_filename = f"summary_{week_start}_to_{week_end}.json"
-        summary_filepath = os.path.join(DATA_DIR, summary_filename)
+        summary_filepath = os.path.join(patient_dir, summary_filename)
 
         with open(summary_filepath, 'w') as f:
             json.dump(analysis, f, indent=2)
@@ -387,9 +406,33 @@ def compare_periods():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/patients', methods=['GET'])
+def list_patients():
+    """
+    List all patients with data in the system
+    """
+    try:
+        os.makedirs(BASE_DATA_DIR, exist_ok=True)
+        patients = [d for d in os.listdir(BASE_DATA_DIR)
+                   if os.path.isdir(os.path.join(BASE_DATA_DIR, d)) and not d.startswith('.')]
+
+        # Get entry counts for each patient
+        patient_info = []
+        for patient_id in patients:
+            patient_dir = os.path.join(BASE_DATA_DIR, patient_id)
+            files = [f for f in os.listdir(patient_dir) if f.endswith('.json') and not f.startswith('week_') and not f.startswith('summary_')]
+            patient_info.append({
+                "patient_id": patient_id,
+                "entry_count": len(files)
+            })
+
+        return jsonify({"patients": patient_info}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
-    # Ensure data directory exists
-    os.makedirs(DATA_DIR, exist_ok=True)
+    # Ensure base data directory exists
+    os.makedirs(BASE_DATA_DIR, exist_ok=True)
 
     # Run the app
     port = int(os.getenv('PORT', 5000))
