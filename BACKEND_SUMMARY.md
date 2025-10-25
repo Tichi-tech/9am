@@ -156,7 +156,7 @@ cp .env.sample .env
 ### 2. Run Server
 ```bash
 python app.py
-# Server runs on http://localhost:5000 (or 5001 if 5000 is busy)
+# Server runs on http://localhost:5050 (update PORT env to change)
 ```
 
 ### 3. Test MVP (Simple)

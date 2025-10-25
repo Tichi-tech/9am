@@ -10,7 +10,7 @@ import requests
 import json
 import sys
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "http://localhost:5050"
 
 def print_response(name, response):
     """Pretty print API response"""

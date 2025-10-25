@@ -53,7 +53,7 @@ cp .env.sample .env
 
 ```bash
 python app.py
-# Server runs on http://localhost:5000
+# Server runs on http://localhost:5050
 ```
 
 ### 3. Test It Out

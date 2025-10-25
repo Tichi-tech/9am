@@ -31,7 +31,7 @@ FRONTEND_URL=http://localhost:3000
 python app.py
 ```
 
-Server will run at `http://localhost:5000`
+Server will run at `http://localhost:5050`
 
 ---
 
@@ -184,6 +184,19 @@ Reads any `summary_*.json` files saved for the patient and normalizes the data f
 
 ---
 
+### Offline Full Pipeline Script
+```
+python scripts/full_pipeline.py \
+    --patient-id maya-thompson \
+    --week-start 2025-01-12 \
+    --week-end 2025-01-18 \
+    --entries-file data/maya-thompson/new_entries.json
+```
+
+The script ingests a batch of daily journal JSON, aggregates the requested week, runs `analyze_weekly_entries`, and writes both the summary JSON plus a therapist-facing Markdown report under `data/<patient_id>/`.
+
+---
+
 ## Testing with Sample Data
 
 ### Quick Test Script
@@ -193,7 +206,7 @@ Reads any `summary_*.json` files saved for the patient and normalizes the data f
 python app.py
 
 # In another terminal, test with curl:
-curl -X POST http://localhost:5000/api/convert-google-doc \
+curl -X POST http://localhost:5050/api/convert-google-doc \
   -H "Content-Type: application/json" \
   -d '{
     "doc_url": "I felt overwhelmed today...",
@@ -212,7 +225,7 @@ with open('test_data.json', 'r') as f:
     test_data = json.load(f)
 
 # Full pipeline test
-response = requests.post('http://localhost:5000/api/process-full-pipeline', json={
+response = requests.post('http://localhost:5050/api/process-full-pipeline', json={
     "doc_urls": [
         {"url": entry["text"], "date": entry["date"]}
         for entry in test_data["sample_entries"]

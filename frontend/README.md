@@ -25,4 +25,4 @@ The frontend expects the backend to expose:
 - `GET /api/patients` – returns `{ patients: [{ patient_id, name, entry_count, latest_week }] }`
 - `GET /api/patients/<patient_id>/analyses` – returns `{ analyses: WeeklyAnalysis[] }` where each analysis contains the `summary`, `patterns`, and `clinical_prompts` displayed in the UI.
 
-Update `VITE_API_BASE_URL` if you deploy the backend somewhere other than `http://localhost:5000`.
+Update `VITE_API_BASE_URL` if you deploy the backend somewhere other than `http://localhost:5050`.
