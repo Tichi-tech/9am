@@ -175,27 +175,23 @@ def analyze_week():
         with open(summary_filepath, 'w') as f:
             json.dump(analysis, f, indent=2)
 
-        # Prepare clean 3-section response for frontend
+        # Build simple summary text
+        mood_trends = analysis.get('mood_trends', {})
+        patterns = analysis.get('patterns', [])
+
+        summary_text = f"Week of {weekly_data['week_start']} to {weekly_data['week_end']}. "
+        summary_text += f"Analyzed {len(weekly_data.get('entries', []))} journal entries. "
+        summary_text += f"Overall mood: {mood_trends.get('overall_sentiment', 'neutral')} "
+        summary_text += f"(score: {mood_trends.get('sentiment_score', 0):.2f}). "
+
+        if patterns:
+            summary_text += f"Primary concerns: {', '.join([p.get('title', '') for p in patterns[:3]])}."
+
+        # Simple 3-section response
         response_data = {
             "theme": analysis.get('patterns', [])[0].get('title', 'Weekly Insights') if analysis.get('patterns') else 'Weekly Insights',
-
-            "summary": {
-                "week_period": f"{weekly_data['week_start']} to {weekly_data['week_end']}",
-                "entry_count": len(weekly_data.get('entries', [])),
-                "overall_mood": analysis.get('mood_trends', {}).get('overall_sentiment', 'neutral'),
-                "sentiment_score": analysis.get('mood_trends', {}).get('sentiment_score', 0),
-                "key_patterns": [
-                    {
-                        "pattern": p.get('title', 'Unknown'),
-                        "severity": p.get('severity', 'moderate'),
-                        "description": p.get('description', '')
-                    }
-                    for p in analysis.get('patterns', [])[:3]
-                ],
-                "main_topics": [topic.get('topic', '') for topic in analysis.get('key_topics', [])[:5]]
-            },
-
-            "suggestions": analysis.get('clinical_prompts', [])
+            "summary": summary_text,
+            "plan": analysis.get('clinical_prompts', [])
         }
 
         return jsonify(response_data), 200
