@@ -175,17 +175,27 @@ def analyze_week():
         with open(summary_filepath, 'w') as f:
             json.dump(analysis, f, indent=2)
 
-        # Prepare response for frontend
+        # Prepare clean 3-section response for frontend
         response_data = {
-            "success": True,
-            "theme": analysis.get('patterns', [])[0].get('title', 'General Patterns') if analysis.get('patterns') else 'Weekly Insights',
+            "theme": analysis.get('patterns', [])[0].get('title', 'Weekly Insights') if analysis.get('patterns') else 'Weekly Insights',
+
             "summary": {
                 "week_period": f"{weekly_data['week_start']} to {weekly_data['week_end']}",
-                "patterns": analysis.get('patterns', []),
-                "mood_trends": analysis.get('mood_trends', {}),
-                "key_topics": analysis.get('key_topics', []),
-                "clinical_prompts": analysis.get('clinical_prompts', [])
-            }
+                "entry_count": len(weekly_data.get('entries', [])),
+                "overall_mood": analysis.get('mood_trends', {}).get('overall_sentiment', 'neutral'),
+                "sentiment_score": analysis.get('mood_trends', {}).get('sentiment_score', 0),
+                "key_patterns": [
+                    {
+                        "pattern": p.get('title', 'Unknown'),
+                        "severity": p.get('severity', 'moderate'),
+                        "description": p.get('description', '')
+                    }
+                    for p in analysis.get('patterns', [])[:3]
+                ],
+                "main_topics": [topic.get('topic', '') for topic in analysis.get('key_topics', [])[:5]]
+            },
+
+            "suggestions": analysis.get('clinical_prompts', [])
         }
 
         return jsonify(response_data), 200
