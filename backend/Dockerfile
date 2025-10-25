@@ -9,6 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend application
 COPY . .
 
+# Copy data folder from parent directory (repo root)
+COPY ../data /app/data
+
 # Expose port (Railway sets this via $PORT)
 EXPOSE ${PORT:-5050}
 
