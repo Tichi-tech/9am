@@ -46,16 +46,23 @@ if response.status_code == 200:
     result = response.json()
     print("✓ SUCCESS!\n")
     print("="*60)
-    print("ANALYSIS RESULTS")
+    print("ANALYSIS RESULTS - 3 SECTIONS")
     print("="*60)
 
-    analysis = result['results']['analysis']
-    print(f"\n📊 THEME: {analysis['theme']}\n")
+    # Section 1: Theme
+    print(f"\n1️⃣  THEME:")
+    print(f"    {result['theme']}\n")
 
-    summary = analysis['summary']
+    # Section 2: Summary
+    print(f"2️⃣  SUMMARY:")
+    summary = result['summary']
+    print(f"    Week: {summary.get('week_period', 'N/A')}")
+    print(f"    Entries: {summary.get('entry_count', 0)}")
+    print(f"    Overall Mood: {summary.get('overall_mood', 'N/A').upper()}")
+    print(f"    Sentiment Score: {summary.get('sentiment_score', 0)}")
 
     # Patterns
-    if 'patterns' in summary:
+    if 'key_patterns' in summary:
         print(f"🔍 PATTERNS FOUND: {len(summary['patterns'])}")
         for i, pattern in enumerate(summary['patterns'][:3], 1):
             print(f"\n  {i}. {pattern.get('title', 'N/A')}")
