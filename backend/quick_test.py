@@ -55,29 +55,11 @@ if response.status_code == 200:
 
     # Section 2: Summary
     print(f"2️⃣  SUMMARY:")
-    summary = result['summary']
-    print(f"    Week: {summary.get('week_period', 'N/A')}")
-    print(f"    Entries: {summary.get('entry_count', 0)}")
-    print(f"    Overall Mood: {summary.get('overall_mood', 'N/A').upper()}")
-    print(f"    Sentiment Score: {summary.get('sentiment_score', 0)}")
+    print(f"    {result['summary']}\n")
 
-    # Patterns
-    if 'key_patterns' in summary:
-        print(f"\n    Key Patterns ({len(summary['key_patterns'])}):")
-        for i, pattern in enumerate(summary['key_patterns'], 1):
-            severity = pattern.get('severity', 'N/A').upper()
-            print(f"\n      {i}. {pattern.get('pattern', 'N/A')} [{severity}]")
-            desc = pattern.get('description', 'N/A')[:120]
-            print(f"         {desc}...")
-
-    # Topics
-    if 'main_topics' in summary:
-        topics = ', '.join(summary['main_topics'])
-        print(f"\n    Main Topics: {topics}")
-
-    # Section 3: Suggestions
-    print(f"\n3️⃣  SUGGESTIONS ({len(result.get('suggestions', []))}):")
-    for i, suggestion in enumerate(result.get('suggestions', []), 1):
+    # Section 3: Plan (Suggestions)
+    print(f"3️⃣  PLAN ({len(result.get('plan', []))}):")
+    for i, suggestion in enumerate(result.get('plan', []), 1):
         print(f"    {i}. {suggestion}")
 
     print("\n" + "="*60)
