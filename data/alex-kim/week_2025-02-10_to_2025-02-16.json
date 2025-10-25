@@ -1,0 +1,42 @@
+{
+  "patient_id": "alex-kim",
+  "week_start": "2025-02-10",
+  "week_end": "2025-02-16",
+  "entries": [
+    {
+      "date": "2025-02-10",
+      "time": "22:30",
+      "text": "Stayed at the office until 10pm again. Everyone else left at 6. My manager didn't even ask me to stay late - I just can't leave work undone. Why am I like this?"
+    },
+    {
+      "date": "2025-02-11",
+      "time": "07:00",
+      "text": "Checking emails before I even get out of bed. Already anxious about today's presentation. Spent 6 hours on slides that took everyone else 2. It's still not perfect. It's never perfect."
+    },
+    {
+      "date": "2025-02-12",
+      "time": "20:00",
+      "text": "Presentation went fine. Got good feedback. So why do I feel like a failure? Keep replaying the one question I fumbled. Nobody else probably even noticed. My brain is exhausting."
+    },
+    {
+      "date": "2025-02-13",
+      "time": "15:30",
+      "text": "Therapy session was tough. Talked about how my self-worth is tied to productivity. Therapist asked 'what would happen if you weren't perfect?' Honestly? It terrifies me."
+    },
+    {
+      "date": "2025-02-14",
+      "time": "18:00",
+      "text": "Tried the homework - left work at 5:30pm. Felt guilty the entire evening. Keep thinking about the emails I didn't answer. This is supposed to get easier, right?"
+    },
+    {
+      "date": "2025-02-15",
+      "time": "12:00",
+      "text": "Said 'no' to taking on an extra project. First time ever. My manager was fine with it. Why did I think the world would end if I set a boundary?"
+    },
+    {
+      "date": "2025-02-16",
+      "time": "21:30",
+      "text": "Weird realization: I've been running from something my whole life. Not towards success, but away from feeling 'not good enough.' Therapy is showing me I've been fighting the wrong battle."
+    }
+  ]
+}

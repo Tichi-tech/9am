@@ -1,0 +1,83 @@
+{
+  "analysis_date": "2025-10-25",
+  "week_period": "2025-01-12 to 2025-01-18",
+  "patterns": [
+    {
+      "type": "recurring_theme",
+      "title": "Overwhelm and Boundaries",
+      "description": "The patient frequently expresses feeling overwhelmed, particularly in work settings, and struggles with setting boundaries due to fear of being perceived negatively (e.g., 2025-01-12 entry).",
+      "frequency": 2,
+      "related_entries": [
+        "2025-01-12",
+        "2025-01-18"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "type": "emotional_cycle",
+      "title": "Isolation and Fear of Rejection",
+      "description": "There is a pattern of isolating behavior driven by fear of rejection, as seen in the reluctance to reach out to Sarah and the avoidance of the mother's call (e.g., 2025-01-13, 2025-01-16).",
+      "frequency": 2,
+      "related_entries": [
+        "2025-01-13",
+        "2025-01-16"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "behavioral_pattern",
+      "title": "Coping with Panic and Anxiety",
+      "description": "The patient experiences panic attacks and uses avoidance and concealment as coping mechanisms, such as hiding in the bathroom during a panic attack (e.g., 2025-01-15).",
+      "frequency": 1,
+      "related_entries": [
+        "2025-01-15"
+      ],
+      "severity": "high"
+    }
+  ],
+  "mood_trends": {
+    "overall_sentiment": "mixed",
+    "sentiment_score": -0.2,
+    "mood_shift": "The mood appears to fluctuate with some positive interactions (e.g., conversation with Alex on 2025-01-17) amidst predominantly negative feelings of overwhelm and isolation.",
+    "notable_times": "Mornings seem particularly challenging, as noted on 2025-01-14."
+  },
+  "key_topics": [
+    {
+      "topic": "work stress",
+      "count": 2,
+      "sentiment": "negative"
+    },
+    {
+      "topic": "relationships",
+      "count": 3,
+      "sentiment": "negative"
+    },
+    {
+      "topic": "mental health",
+      "count": 4,
+      "sentiment": "negative"
+    },
+    {
+      "topic": "family",
+      "count": 1,
+      "sentiment": "negative"
+    }
+  ],
+  "clinical_prompts": [
+    "Explore the patient's fear of rejection and its impact on relationships.",
+    "Discuss the patient's experience with panic attacks and potential coping strategies.",
+    "Examine the patient's difficulty with setting boundaries and its relation to work stress.",
+    "Consider the patient's perception of normalcy and how it affects their mood.",
+    "Address the patient's feelings of guilt and how they relate to family dynamics."
+  ],
+  "strengths_observed": [
+    "The patient recognizes small victories, such as making coffee despite feeling down.",
+    "Positive social interaction with a coworker provided a sense of normalcy."
+  ],
+  "concerns": [
+    "The patient's increasing ability to hide panic attacks, which may prevent them from seeking help.",
+    "Persistent feelings of failure and heaviness, particularly in the mornings."
+  ],
+  "model_used": "gpt-4o",
+  "entry_count": 7
+}
