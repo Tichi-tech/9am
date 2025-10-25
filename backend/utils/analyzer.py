@@ -44,7 +44,7 @@ Time: {entry.get('time', 'Unknown')}
 
     return '\n'.join(entries_text)
 
-def analyze_weekly_entries(weekly_data, model="gpt-4", temperature=0.3):
+def analyze_weekly_entries(weekly_data, model="gpt-4o", temperature=0.3):
     """
     Main function to analyze weekly journal entries using OpenAI
 

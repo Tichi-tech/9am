@@ -7,6 +7,7 @@ from datetime import datetime
 
 from utils.google_doc_converter import convert_google_doc_to_json
 from utils.analyzer import analyze_weekly_entries
+from utils.long_term_analyzer import analyze_long_term_trends, compare_time_periods
 
 # Load environment variables
 load_dotenv()
@@ -285,6 +286,86 @@ def process_full_pipeline():
             "success": True,
             "message": "Full pipeline completed",
             "results": results
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/analyze-long-term', methods=['POST'])
+def analyze_long_term():
+    """
+    Analyze trends over a longer period (month, year, etc.)
+
+    Expected payload:
+    {
+        "start_date": "2025-01-01",
+        "end_date": "2025-03-31"
+    }
+    """
+    try:
+        data = request.json
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+
+        if not start_date or not end_date:
+            return jsonify({"error": "start_date and end_date are required"}), 400
+
+        # Perform long-term analysis
+        analysis = analyze_long_term_trends(start_date, end_date, DATA_DIR)
+
+        # Save long-term analysis
+        filename = f"long_term_analysis_{start_date}_to_{end_date}.json"
+        filepath = os.path.join(DATA_DIR, filename)
+
+        with open(filepath, 'w') as f:
+            json.dump(analysis, f, indent=2)
+
+        return jsonify({
+            "success": True,
+            "analysis": analysis,
+            "file": filename
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/compare-periods', methods=['POST'])
+def compare_periods():
+    """
+    Compare two time periods
+
+    Expected payload:
+    {
+        "period1": {"start": "2025-01-01", "end": "2025-01-31"},
+        "period2": {"start": "2025-02-01", "end": "2025-02-28"}
+    }
+    """
+    try:
+        data = request.json
+        period1 = data.get('period1')
+        period2 = data.get('period2')
+
+        if not period1 or not period2:
+            return jsonify({"error": "period1 and period2 are required"}), 400
+
+        # Compare the two periods
+        comparison = compare_time_periods(
+            period1['start'], period1['end'],
+            period2['start'], period2['end'],
+            DATA_DIR
+        )
+
+        # Save comparison
+        filename = f"comparison_{period1['start']}_vs_{period2['start']}.json"
+        filepath = os.path.join(DATA_DIR, filename)
+
+        with open(filepath, 'w') as f:
+            json.dump(comparison, f, indent=2)
+
+        return jsonify({
+            "success": True,
+            "comparison": comparison,
+            "file": filename
         }), 200
 
     except Exception as e:
