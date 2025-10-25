@@ -18,6 +18,102 @@ CORS(app)
 # Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 BASE_DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+PATIENTS_REGISTRY_PATH = os.path.join(BASE_DATA_DIR, 'patients.json')
+
+
+def load_patient_registry():
+    """Load patient metadata from registry or infer from directories"""
+    if os.path.exists(PATIENTS_REGISTRY_PATH):
+        with open(PATIENTS_REGISTRY_PATH, 'r') as registry_file:
+            registry = json.load(registry_file)
+            return registry.get('patients', [])
+
+    # Fallback: derive from available directories
+    os.makedirs(BASE_DATA_DIR, exist_ok=True)
+    patients = [
+        {
+            "id": entry,
+            "name": entry.replace('-', ' ').title()
+        }
+        for entry in os.listdir(BASE_DATA_DIR)
+        if os.path.isdir(os.path.join(BASE_DATA_DIR, entry)) and not entry.startswith('.')
+    ]
+
+    if not patients:
+        patients.append({"id": "default", "name": "Default Patient"})
+
+    return patients
+
+
+def resolve_patient_dir(patient_id):
+    """Return the storage directory for a patient without creating it"""
+    candidate = os.path.join(BASE_DATA_DIR, patient_id)
+    if os.path.isdir(candidate):
+        return candidate
+
+    if patient_id == 'default' and os.path.isdir(BASE_DATA_DIR):
+        return BASE_DATA_DIR
+
+    raise FileNotFoundError(f"Patient '{patient_id}' not found")
+
+
+def extract_week_range(filename):
+    """Parse week start/end dates from a summary filename"""
+    if not filename.startswith('summary_'):
+        return None, None
+
+    week_part = filename.replace('summary_', '').replace('.json', '')
+    if '_to_' in week_part:
+        start, end = week_part.split('_to_')
+        return start, end
+
+    return None, None
+
+
+def build_weekly_analysis(summary_data, patient_id, filename):
+    """Normalize stored summary JSON for frontend consumption"""
+    week_start, week_end = extract_week_range(filename)
+
+    if not week_start and summary_data.get('week_period'):
+        try:
+            week_start, week_end = summary_data['week_period'].split(' to ')
+        except ValueError:
+            week_start = summary_data.get('week_period')
+            week_end = ''
+
+    patterns = summary_data.get('patterns', [])
+    normalized_patterns = [
+        {
+            "name": pattern.get('title', 'Pattern'),
+            "severity": pattern.get('severity', 'moderate'),
+            "description": pattern.get('description', '')
+        }
+        for pattern in patterns
+    ]
+
+    themes_text = ' '.join(pattern.get('description', '') for pattern in patterns).strip()
+    if not themes_text:
+        themes_text = summary_data.get('week_period', 'Weekly insights')
+
+    mood_trends = summary_data.get('mood_trends', {})
+
+    return {
+        "id": filename,
+        "patient_id": patient_id,
+        "week_start": week_start,
+        "week_end": week_end,
+        "entries_analyzed": summary_data.get('entry_count', 0),
+        "overall_mood": mood_trends.get('overall_sentiment', 'neutral'),
+        "sentiment_score": mood_trends.get('sentiment_score', 0),
+        "themes": themes_text,
+        "theme_title": normalized_patterns[0]['name'] if normalized_patterns else 'Weekly Insights',
+        "patterns": normalized_patterns,
+        "mood_description": mood_trends.get('mood_shift', ''),
+        "clinical_prompts": summary_data.get('clinical_prompts', []),
+        "strengths": summary_data.get('strengths_observed', []),
+        "created_at": summary_data.get('analysis_date', datetime.utcnow().strftime('%Y-%m-%d'))
+    }
+
 
 def get_patient_data_dir(patient_id):
     """Get or create data directory for a specific patient"""
@@ -412,21 +508,73 @@ def list_patients():
     List all patients with data in the system
     """
     try:
-        os.makedirs(BASE_DATA_DIR, exist_ok=True)
-        patients = [d for d in os.listdir(BASE_DATA_DIR)
-                   if os.path.isdir(os.path.join(BASE_DATA_DIR, d)) and not d.startswith('.')]
-
-        # Get entry counts for each patient
+        registry = load_patient_registry()
         patient_info = []
-        for patient_id in patients:
-            patient_dir = os.path.join(BASE_DATA_DIR, patient_id)
-            files = [f for f in os.listdir(patient_dir) if f.endswith('.json') and not f.startswith('week_') and not f.startswith('summary_')]
+
+        for patient in registry:
+            patient_id = patient.get('id')
+            if not patient_id:
+                continue
+
+            try:
+                patient_dir = resolve_patient_dir(patient_id)
+            except FileNotFoundError:
+                continue
+
+            entry_files = [
+                f for f in os.listdir(patient_dir)
+                if f.endswith('.json') and not f.startswith('week_') and not f.startswith('summary_')
+            ]
+
+            summary_files = [
+                f for f in os.listdir(patient_dir)
+                if f.startswith('summary_') and f.endswith('.json')
+            ]
+
+            latest_week = None
+            if summary_files:
+                summary_files.sort(reverse=True)
+                week_start, week_end = extract_week_range(summary_files[0])
+                latest_week = {
+                    "start": week_start,
+                    "end": week_end
+                }
+
             patient_info.append({
                 "patient_id": patient_id,
-                "entry_count": len(files)
+                "name": patient.get('name', patient_id),
+                "therapist": patient.get('therapist'),
+                "entry_count": len(entry_files),
+                "latest_week": latest_week
             })
 
         return jsonify({"patients": patient_info}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/patients/<patient_id>/analyses', methods=['GET'])
+def get_patient_analyses(patient_id):
+    """Return stored weekly analyses for a patient"""
+    try:
+        patient_dir = resolve_patient_dir(patient_id)
+        summary_files = [
+            f for f in os.listdir(patient_dir)
+            if f.startswith('summary_') and f.endswith('.json')
+        ]
+
+        analyses = []
+        for filename in summary_files:
+            summary_path = os.path.join(patient_dir, filename)
+            with open(summary_path, 'r') as summary_file:
+                summary_data = json.load(summary_file)
+                analyses.append(build_weekly_analysis(summary_data, patient_id, filename))
+
+        analyses.sort(key=lambda item: item.get('week_start') or '', reverse=True)
+
+        return jsonify({"analyses": analyses}), 200
+    except FileNotFoundError as e:
+        return jsonify({"error": str(e)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

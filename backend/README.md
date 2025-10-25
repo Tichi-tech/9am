@@ -166,6 +166,24 @@ Converts docs → aggregates → analyzes in one call.
 
 ---
 
+### List Patients (Frontend helper)
+```
+GET /api/patients
+```
+
+Returns registered patients plus basic metadata (name, entry counts, latest analyzed week). Uses `data/patients.json` when available or discovers folders in `data/`.
+
+---
+
+### Fetch Stored Weekly Analyses (Frontend helper)
+```
+GET /api/patients/<patient_id>/analyses
+```
+
+Reads any `summary_*.json` files saved for the patient and normalizes the data for the React dashboard. The latest entry is returned first.
+
+---
+
 ## Testing with Sample Data
 
 ### Quick Test Script
