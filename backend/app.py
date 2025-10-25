@@ -283,30 +283,26 @@ def process_full_pipeline():
         with open(summary_filepath, 'w') as f:
             json.dump(analysis, f, indent=2)
 
-        # Format analysis in clean 3-section structure
-        results['analysis'] = {
+        # Build simple summary text
+        mood_trends = analysis.get('mood_trends', {})
+        patterns = analysis.get('patterns', [])
+
+        summary_text = f"Week of {week_start} to {week_end}. "
+        summary_text += f"Analyzed {len(entries)} journal entries. "
+        summary_text += f"Overall mood: {mood_trends.get('overall_sentiment', 'neutral')} "
+        summary_text += f"(score: {mood_trends.get('sentiment_score', 0):.2f}). "
+
+        if patterns:
+            summary_text += f"Primary concerns: {', '.join([p.get('title', '') for p in patterns[:3]])}."
+
+        # Simple 3-section response
+        response_data = {
             "theme": analysis.get('patterns', [])[0].get('title', 'Weekly Insights') if analysis.get('patterns') else 'Weekly Insights',
-
-            "summary": {
-                "week_period": f"{week_start} to {week_end}",
-                "entry_count": len(entries),
-                "overall_mood": analysis.get('mood_trends', {}).get('overall_sentiment', 'neutral'),
-                "sentiment_score": analysis.get('mood_trends', {}).get('sentiment_score', 0),
-                "key_patterns": [
-                    {
-                        "pattern": p.get('title', 'Unknown'),
-                        "severity": p.get('severity', 'moderate'),
-                        "description": p.get('description', '')
-                    }
-                    for p in analysis.get('patterns', [])[:3]
-                ],
-                "main_topics": [topic.get('topic', '') for topic in analysis.get('key_topics', [])[:5]]
-            },
-
-            "suggestions": analysis.get('clinical_prompts', [])
+            "summary": summary_text,
+            "plan": analysis.get('clinical_prompts', [])
         }
 
-        return jsonify(results['analysis']), 200
+        return jsonify(response_data), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
