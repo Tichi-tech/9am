@@ -17,7 +17,13 @@ CORS(app)
 
 # Configuration
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-BASE_DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+
+# Check if running in Railway (data is at repo root level)
+if os.path.exists('/app/data'):
+    BASE_DATA_DIR = '/app/data'
+else:
+    BASE_DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+
 PATIENTS_REGISTRY_PATH = os.path.join(BASE_DATA_DIR, 'patients.json')
 
 
