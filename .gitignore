@@ -31,8 +31,8 @@ build/
 Thumbs.db
 
 # Data (keep demo patient data folders)
-data/demo-patient/
-!data/patients.json
+backend/data/demo-patient/
+!backend/data/patients.json
 
 # Logs
 logs/
