@@ -1,6 +1,7 @@
 FROM python:3.10-slim
 
 WORKDIR /app
+# Force rebuild to include patient data - 2025-10-25
 
 # Install dependencies
 COPY requirements.txt .
