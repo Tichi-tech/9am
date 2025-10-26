@@ -1,0 +1,42 @@
+{
+  "patient_id": "anonymous_001",
+  "week_start": "2025-01-12",
+  "week_end": "2025-01-18",
+  "entries": [
+    {
+      "date": "2025-01-12",
+      "time": "13:44",
+      "text": "I felt really overwhelmed today at work. Everyone needed something from me and I couldn't say no. By the time I got home, I just wanted to disappear. I know I should set boundaries but I'm afraid people will think I'm not a team player."
+    },
+    {
+      "date": "2025-01-13",
+      "time": "13:44",
+      "text": "I wanted to reach out to Sarah but didn't. I convinced myself she's probably busy and doesn't want to hear from me anyway. Why do I always do this? I push people away before they can leave me."
+    },
+    {
+      "date": "2025-01-14",
+      "time": "13:44",
+      "text": "Woke up feeling heavy again. This is the third day in a row. I used to love mornings. Now I just lie there thinking about all the ways I'm failing. Got up eventually and made coffee. Small victory, I guess."
+    },
+    {
+      "date": "2025-01-15",
+      "time": "13:44",
+      "text": "Had a panic attack before the meeting today. Heart racing, couldn't breathe. Locked myself in the bathroom for 10 minutes. No one noticed when I came back. Or if they did, they didn't say anything. I'm getting better at hiding it, which feels both good and terrible."
+    },
+    {
+      "date": "2025-01-16",
+      "time": "13:44",
+      "text": "Mom called. Didn't answer. She left a voicemail asking if I'm okay. I don't know how to explain that I'm not, and I'm also not sure I'm not. Everything feels muted, like I'm watching my life through frosted glass. Went for a walk instead. The cold air helped a little."
+    },
+    {
+      "date": "2025-01-17",
+      "time": "13:44",
+      "text": "Actually had a good conversation with my coworker Alex today. We talked about that new show everyone's watching. It felt normal. I realized I haven't felt normal in weeks. Made me sad but also gave me hope? Can't tell which emotion is winning."
+    },
+    {
+      "date": "2025-01-18",
+      "time": "13:44",
+      "text": "Therapy is tomorrow. I should make a list of things to talk about but everything feels both urgent and pointless at the same time. The panic attacks, the isolation, the work stress, the guilt about Mom. Where do I even start? Maybe I'll just see what comes up."
+    }
+  ]
+}

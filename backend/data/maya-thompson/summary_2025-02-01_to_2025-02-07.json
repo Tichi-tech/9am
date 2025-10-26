@@ -1,0 +1,74 @@
+{
+  "analysis_date": "2025-10-25",
+  "week_period": "2025-02-01 to 2025-02-07",
+  "patterns": [
+    {
+      "type": "recurring_theme",
+      "title": "Feelings of Inadequacy and Self-Doubt",
+      "description": "The patient frequently expresses feelings of inadequacy, as seen in the entries from 2025-02-01 and 2025-02-02, where they mention freezing during a presentation and feeling undeserving of friendship.",
+      "frequency": 2,
+      "related_entries": [
+        "2025-02-01",
+        "2025-02-02"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "type": "emotional_cycle",
+      "title": "Anxiety Triggered by Work Situations",
+      "description": "Work-related stress is a significant trigger for anxiety, as evidenced by the presentation incident on 2025-02-01. The patient responds with crying and withdrawal.",
+      "frequency": 1,
+      "related_entries": [
+        "2025-02-01"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "behavioral_pattern",
+      "title": "Avoidance of Social Interactions",
+      "description": "The patient tends to avoid social interactions when feeling low, as noted on 2025-02-02 when they ignored a friend's text.",
+      "frequency": 1,
+      "related_entries": [
+        "2025-02-02"
+      ],
+      "severity": "moderate"
+    }
+  ],
+  "mood_trends": {
+    "overall_sentiment": "negative",
+    "sentiment_score": -0.5,
+    "mood_shift": "The mood appears to be improving slightly by 2025-02-03 with the use of coping strategies, but overall remains negative.",
+    "notable_times": "Afternoons are consistently mentioned, possibly indicating a pattern in mood or activity level."
+  },
+  "key_topics": [
+    {
+      "topic": "work",
+      "count": 1,
+      "sentiment": "negative"
+    },
+    {
+      "topic": "friendship",
+      "count": 1,
+      "sentiment": "negative"
+    },
+    {
+      "topic": "coping strategies",
+      "count": 1,
+      "sentiment": "positive"
+    }
+  ],
+  "clinical_prompts": [
+    "Explore the patient's feelings of inadequacy and their origins.",
+    "Discuss the effectiveness and potential expansion of coping strategies like breathing exercises.",
+    "Examine the impact of work-related stress and develop strategies to manage it.",
+    "Address the patient's tendency to withdraw socially and its effects on their well-being."
+  ],
+  "strengths_observed": [
+    "The patient is open to using therapeutic techniques, as seen with the breathing exercise on 2025-02-03."
+  ],
+  "concerns": [
+    "The patient's self-worth and negative self-talk, especially in social and work contexts, may require immediate attention."
+  ],
+  "model_used": "gpt-4o",
+  "entry_count": 3
+}

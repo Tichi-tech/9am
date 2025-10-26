@@ -1,0 +1,22 @@
+{
+  "patient_id": "anonymous_001",
+  "week_start": "2025-02-01",
+  "week_end": "2025-02-07",
+  "entries": [
+    {
+      "date": "2025-02-01",
+      "time": "14:00",
+      "text": "Today was rough. I had a big presentation at work and I completely froze. My boss asked me a question and my mind went blank. I felt like everyone was judging me. Came home and cried for an hour."
+    },
+    {
+      "date": "2025-02-02",
+      "time": "14:00",
+      "text": "Didn't want to get out of bed this morning. What's the point? I keep messing everything up. My friend texted but I ignored it. I don't deserve their friendship anyway."
+    },
+    {
+      "date": "2025-02-03",
+      "time": "14:00",
+      "text": "Tried that breathing exercise my therapist taught me when I felt anxious today. It actually helped a little. Maybe there's hope? I don't know. Baby steps I guess."
+    }
+  ]
+}
